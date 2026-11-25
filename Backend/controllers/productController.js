@@ -63,7 +63,10 @@ const addProduct = async (req, res) => {
 // function for List product
 const listProducts = async (req, res) => {
   try {
-    const products = await productModel.find({});
+    // .lean() skips Mongoose document hydration 
+    const products = await productModel.find({}).sort({ date: -1 }).lean();
+    // Let browsers/CDNs reuse the response briefly and serve stale while revalidating
+    res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
     res.json({ success: true, products });
   } catch (error) {
     console.log(error);

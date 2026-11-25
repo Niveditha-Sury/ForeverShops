@@ -37,4 +37,7 @@ app.get('/', (req,res) => {
     res.send('API Working')
 })
 
+// Lightweight endpoint for uptime pings (keeps free-tier hosts from sleeping)
+app.get('/health', (req,res) => res.status(200).json({ status: 'ok' }))
+
 app.listen(Port,() => console.log('Server is running on port : '+ Port))

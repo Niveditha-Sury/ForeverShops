@@ -1,20 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import Title from './Title';
-import ProductItem from './ProductItem';
+import ProductItem, { ProductSkeleton } from './ProductItem';
 
 
 const LatestCollection = () => {
-  
-   const {products} = useContext(ShopContext);
- 
+
+   const {products, productsLoading} = useContext(ShopContext);
+
    const [latestProducts,setLatestProducts] = useState([]);
 
    useEffect(()=>{
       setLatestProducts(products.slice(0,10));
    },[products])
-  
-
 
   return (
     <div className='my-10'>
@@ -28,9 +26,11 @@ const LatestCollection = () => {
       {/* products */}
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6'>
         {
-          latestProducts.map((item,index)=>(
-            <ProductItem key={index} id={item._id} image={item.image} name={item.name} price={item.price} />
-          ))
+          productsLoading && latestProducts.length === 0
+            ? Array.from({length:10}).map((_,i)=><ProductSkeleton key={i}/>)
+            : latestProducts.map((item,index)=>(
+                <ProductItem key={item._id} id={item._id} image={item.image} name={item.name} price={item.price} eager={index < 5} />
+              ))
         }
       </div>
     </div>

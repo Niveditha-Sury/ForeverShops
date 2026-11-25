@@ -13,7 +13,15 @@ const ShopContextProvider = (props) => {
     const [search,setSearch] = useState('');
     const [showSearch,setShowSearch] = useState(false);
     const [cartItems,setCartItems] = useState({});
-    const [products,setProducts] = useState([]);
+    const [products,setProducts] = useState(() => {
+    // Hydrate instantly from the last successful response (stale-while-revalidate)
+    try {
+        return JSON.parse(sessionStorage.getItem('products_cache')) || [];
+    } catch {
+        return [];
+    }
+     });
+    const [productsLoading,setProductsLoading] = useState(products.length === 0);
     const [token,setToken] = useState('');
     const navigate = useNavigate();
 
@@ -103,17 +111,22 @@ const ShopContextProvider = (props) => {
     }
 
     const getProductsData = async () => {
-        try {
-            const response = await axios.get(backendUrl + '/api/product/list')
-            if(response.data.success) {
-                setProducts(response.data.products)
-            } else {
-                toast.error(response.data.message)
-            }
-        } catch (error) {
-            console.log(error);
-            toast.error(error.message)
+    try {
+        const response = await axios.get(backendUrl + '/api/product/list', { timeout: 60000 })
+        if(response.data.success) {
+            setProducts(response.data.products)
+            try {
+                sessionStorage.setItem('products_cache', JSON.stringify(response.data.products))
+            } catch { /* storage full or unavailable - ignore */ }
+        } else {
+            toast.error(response.data.message)
         }
+    } catch (error) {
+        console.log(error);
+        toast.error(error.message)
+    } finally {
+        setProductsLoading(false)
+    }
     }
 
     const getUserCart = async (token) => {
@@ -141,6 +154,7 @@ const ShopContextProvider = (props) => {
 
     const value ={
           products ,
+          productsLoading,
           currency ,
           delivery_fee,
           search,

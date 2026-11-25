@@ -10,7 +10,7 @@ try {
 
 const connectDB = async () => {
   mongoose.connection.on('connected', () => {
-    console.log('MongoDB connected successfully');  
+    console.log('MongoDB connected successfully');
   });
 
   mongoose.connection.on('error', (err) => {
@@ -23,18 +23,9 @@ const connectDB = async () => {
     return;
   }
 
-  // Handle URI formatting so /e-commerce is placed before query parameters
-  let connectionUrl = uri;
-  if (uri.includes('?')) {
-    const [base, query] = uri.split('?');
-    const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
-    connectionUrl = `${cleanBase}/e-commerce?${query}`;
-  } else {
-    const cleanBase = uri.endsWith('/') ? uri.slice(0, -1) : uri;
-    connectionUrl = `${cleanBase}/e-commerce`;
-  }
-
-  await mongoose.connect(connectionUrl);
+  // dbName sets the database explicitly, so it works whether or not
+  // the URI already contains a database name.
+  await mongoose.connect(uri, { dbName: 'e-commerce' });
 };
 
 export default connectDB;
