@@ -19,6 +19,18 @@
 
 ---
 
+<img width="1210" height="572" alt="forever" src="https://github.com/user-attachments/assets/d78b1f1c-3f29-4fe1-8349-73deac368739" />
+
+
+
+---
+
+## 🚀 Live Status & Access
+| Status | Deployed Link |
+| :---: | :--- |
+| **Live** (Always Up-to-Date) | [**https://forevershops.netlify.app/**](https://forevershops.netlify.app/) |
+
+---
 
 ## 📑 Table of Contents
 
